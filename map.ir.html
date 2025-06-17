@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mapp styles -->
+    <link rel="stylesheet" href="https://cdn.map.ir/web-sdk/1.4.2/css/mapp.min.css">
+    <link rel="stylesheet" href="https://cdn.map.ir/web-sdk/1.4.2/css/fa/style.css">
+    <!-- Your styles -->
+    <!-- <link rel="stylesheet" href="./app/css/app.css"> -->
+    <style>
+    @charset "utf-8";
+
+    html,
+    body {
+        width: 800px;
+        height: 400px;
+        padding: 0;
+        margin: 50px auto;
+    }
+
+    html {
+        font-size: 10px;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    #app {
+        width: 100%;
+        height: 100%;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="text/javascript" src="https://cdn.map.ir/web-sdk/1.4.2/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.map.ir/web-sdk/1.4.2/js/mapp.env.js"></script>
+    <script type="text/javascript" src="https://cdn.map.ir/web-sdk/1.4.2/js/mapp.min.js"></script>
+    <!-- Your scripts -->
+    <!-- <script type="text/javascript" src="./app/js/app.js"></script> -->
+    <script>
+    $(document).ready(function() {
+        var app = new Mapp({
+            element: '#app',
+            presets: {
+                latlng: {
+                    lat: 35.69213025097759,
+                    lng: 51.39181137084962,
+                },
+                zoom: 12,
+            },
+            apiKey: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjJmZjE0OGNhNjAwY2I1MzY1NDY3NWE1Nzc5YTExYTk3NmE0MGM2MWU5MzM2ZjQ1YTJiNmI3OTA0NTA3OGJhNTcwNTJkOWM3YWE0ZWVlY2I1In0.eyJhdWQiOiIzMjk3NiIsImp0aSI6IjJmZjE0OGNhNjAwY2I1MzY1NDY3NWE1Nzc5YTExYTk3NmE0MGM2MWU5MzM2ZjQ1YTJiNmI3OTA0NTA3OGJhNTcwNTJkOWM3YWE0ZWVlY2I1IiwiaWF0IjoxNzUwMTA5NDc2LCJuYmYiOjE3NTAxMDk0NzYsImV4cCI6MTc1MjcwMTQ3Niwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.S2AoKXfqsFCMQvL4l3OXcGC3We5zhfUP9_gLe04rFxE0khMsOfUKn3mwgxpNy0uhFJeVK5LJzJqBp5hjWL7vLGjKFHyjhkP0zuUQAF7jb7iqYzCDIOR2IajiwsJ1sUho8aclADmo75-loYT5Wid-GOpRNj7M2qKgl7ClRFuSS5rOABXs_T8jXzroMKgIUQTgfIatSyTqvEFbGuOgyqvMFJnRvbooa-qEF2qxkMj0LCkpj5AGrh-CyDRxvNBF5AN-b3dSeds3BlwGZQxy80iQ254ptCBQIrEW0zGd3V_ctoRvUqaOaN-nfIcJ4HFZbImSzdwA1cvRQRPp_IYN3PT2QA'
+        });
+        app.addLayers();
+
+        let marked = 0
+        let startLoc
+        let endLoc
+
+        app.map.on('click', function(e) {
+            if (marked > 0) {
+                endLoc = [e.latlng.lat, e.latlng.lng]
+                drawRoute(startLoc, endLoc)
+            } else {
+                // آدرس یابی و نمایش نتیجه در یک باکس مشخص
+                app.showReverseGeocode({
+                    state: {
+                        latlng: {
+                            lat: e.latlng.lat,
+                            lng: e.latlng.lng
+                        },
+                        zoom: 16
+                    }
+                });
+
+                app.addMarker({
+                    name: 'advanced-marker',
+                    latlng: {
+                        lat: e.latlng.lat,
+                        lng: e.latlng.lng
+                    },
+                    icon: app.icons.red,
+                    popup: false
+                });
+                marked++;
+                startLoc = [e.latlng.lat, e.latlng.lng]
+                setTimeout(() => {
+                    alert("مبدا انتخاب شد. حالا مقصد را انتخاب کنید")
+                }, 500);
+            }
+            // برای سفارشی سازی نمایش نتیجه به جای متد بالا از متد زیر میتوان استفاده کرد
+
+        });
+
+        function drawRoute(start, end) {
+            marked = 0
+            app.drawRoute({
+                start,
+                end,
+                mode: 'car',
+                draggable: true,
+                fit: true,
+            });
+        }
+    });
+    </script>
+</body>
+
+</html>
